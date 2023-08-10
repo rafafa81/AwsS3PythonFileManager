@@ -29,16 +29,16 @@ class AwsS3:
 
     def setEnv(self, env):
         if env == "NAT":
-            s3 = self.__credentials_nat_assigment_client()
+            self.__s3 = self.__credentials_nat_assigment_client()
             self.__bucketName = self.__S3_NAT_BUCKET
         else:
             return "Ambiente no identificado"
-        self.__s3= s3
 
     def getEnv(self):
         return self.__bucketName
 
     def getFilesList(self):
+        self.__s3 = self.__credentials_nat_assigment_client()
         listFolderArray = []
         dictFiles = {}
         result = self.__s3.list_objects(Bucket=self.__bucketName, Prefix=self.__path, Delimiter='/')
@@ -52,8 +52,8 @@ class AwsS3:
         return self.__transformFilesList(listFolderArray,dictFiles)
 
     def downloadFile(self, fileName,username):
-        s3 = self.__credentials_nat_assigment_resource()
-        bucket = s3.Bucket(self.__bucketName)
+        self.__s3 = self.__credentials_nat_assigment_resource()
+        bucket = self.__s3.Bucket(self.__bucketName)
         if self.getPath().endswith("/"):
             fileConcatenation=self.getPath() + fileName
         else:
